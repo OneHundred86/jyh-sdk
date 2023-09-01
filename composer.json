@@ -1,0 +1,34 @@
+{
+    "name": "oh86/jyh-sdk",
+    "type": "library",
+    "license": "MIT",
+    "description": "jyh sdk in laravel framework",
+    "autoload": {
+        "psr-4": {
+            "Oh86\\JYH\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "authors": [
+        {
+            "name": "chenguangjun",
+            "email": "chen.gj@qq.com"
+        }
+    ],
+    "required": {
+        "laravel/framework": "^7.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Oh86\\JYH\\JYHServiceProvider"
+            ],
+            "aliases": {
+                "JYHOAuth": "Oh86\\JYH\\Facades\\JYHOAuth",
+                "JYHUCPrivateApi": "Oh86\\JYH\\Facades\\JYHUCPrivateApi"
+            }
+        }
+    }
+}
