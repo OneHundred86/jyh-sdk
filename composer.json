@@ -17,7 +17,7 @@
             "email": "chen.gj@qq.com"
         }
     ],
-    "required": {
+    "require": {
         "laravel/framework": "^7.0"
     },
     "extra": {
