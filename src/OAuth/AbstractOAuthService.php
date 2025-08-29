@@ -120,7 +120,7 @@ abstract class AbstractOAuthService
      */
     public function getMiddlewares(): array
     {
-        return $this->middleware;
+        return $this->middlewares;
     }
 
     /**
@@ -128,7 +128,7 @@ abstract class AbstractOAuthService
      */
     public function setMiddlewares(array $middlewares): void
     {
-        $this->middleware = $middlewares;
+        $this->middlewares = $middlewares;
     }
 
 
@@ -160,10 +160,10 @@ abstract class AbstractOAuthService
         $resp = Http::acceptJson()->post($url, ["access_token" => $accessToken]);
 
         $arr = $resp->json();
-        if(data_get($arr, "errcode") !== 0){
-            if(($errmessage = data_get($arr, "errmessage"))){
+        if (data_get($arr, "errcode") !== 0) {
+            if (($errmessage = data_get($arr, "errmessage"))) {
                 throw new LoginException($errmessage);
-            }else{
+            } else {
                 Log::error(__METHOD__, ["response" => $resp->body()]);
                 throw new LoginException("获取用户信息失败");
             }
@@ -187,10 +187,10 @@ abstract class AbstractOAuthService
         ]);
 
         $arr = $resp->json();
-        if(data_get($arr, "errcode") !== 0){
-            if(($errmessage = data_get($arr, "errmessage"))){
+        if (data_get($arr, "errcode") !== 0) {
+            if (($errmessage = data_get($arr, "errmessage"))) {
                 throw new LoginException($errmessage);
-            }else{
+            } else {
                 Log::error(__METHOD__, ["response" => $resp->body()]);
                 throw new LoginException("获取用户信息失败");
             }
@@ -206,9 +206,9 @@ abstract class AbstractOAuthService
      */
     public function getUserInfoByAccessToken(string $accessToken): array
     {
-        if($this->getFetchUserType() == "base"){
+        if ($this->getFetchUserType() == "base") {
             return $this->getBaseUserByAccessToken($accessToken);
-        }else{
+        } else {
             return $this->getDetailUserByAccessToken($accessToken);
         }
     }
@@ -222,7 +222,7 @@ abstract class AbstractOAuthService
     {
         $url = sprintf("%s/usercenter/logout", $this->rootUrl);
         $resp = Http::acceptJson()->post($url, ["logout_token" => $logoutToken]);
-        if($resp->json("errcode") !== 0){
+        if ($resp->json("errcode") !== 0) {
             Log::error(__METHOD__, ["response" => $resp->body()]);
             return false;
         }
@@ -235,7 +235,7 @@ abstract class AbstractOAuthService
      * @param array $userData
      * @return string  redirectUri登录后的跳转地址
      */
-    abstract public function handleLoginCallback(Request $request, Array $userData): string;
+    abstract public function handleLoginCallback(Request $request, array $userData): string;
 
     /**
      * 处理本应用系统的登出逻辑，并返回之后的跳转地址

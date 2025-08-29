@@ -2,15 +2,15 @@
 
 return [
     "uc" => [
-        "root_url" => env("JYH_UC_ROOT_URL"),
+        "root_url" => env("JYH_UC_ROOT_URL", "https://cloudtest.southxx.com"),
         "site_app_id" => env("JYH_SITE_APPID"),
         "service_area_ids" => env("JYH_SERVICE_AREA_IDS") ? explode(",", env("JYH_SERVICE_AREA_IDS")) : null,
         "private_api" => [
-            "app" => env("JYH_UC_PRIVATE_APP"),
-            "ticket" => env("JYH_UC_PRIVATE_TICKET"),
+            "app" => env("JYH_UC_PRIVATE_APP", "demo"),
+            "ticket" => env("JYH_UC_PRIVATE_TICKET", "demo-ticket"),
         ],
         "oauth" => [
-            "app" => env("JYH_OAUTH_APP"),
+            "app" => env("JYH_OAUTH_APP", "demo"),
             // 统一登录和登出的业务处理类，需要继承类\Oh86\JYH\OAuth\AbstractOAuthService，null表示不需要接入
             "service_class" => null,
             // 本应用系统的登录路由，无须指定域名
