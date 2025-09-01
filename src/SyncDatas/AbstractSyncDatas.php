@@ -72,7 +72,7 @@ abstract class AbstractSyncDatas
         } else {
             $fromVersion = $this->getSyncDataVersion();
             if ($fromVersion === null) {
-                throw new SyncDataException($syncName."数据先至少完成一次全量同步");
+                throw new SyncDataException($syncName . "数据先至少完成一次全量同步");
             }
         }
 
@@ -93,12 +93,20 @@ abstract class AbstractSyncDatas
 
             foreach ($list as $item) {
                 $operation = $item["operation"];
-                $infoKey = $this->isSyncUser() ? "user" : "info";
 
-                if($operation == Constant::SyncOpDelete){
-                    $this->handleDeleteData($item[$infoKey]);
-                }else{
-                    $this->handleCreateOrUpdateData($item[$infoKey]);
+                if ($this->isSyncUser()) {
+                    unset($item["operation"]);
+                    if ($operation == Constant::SyncOpDelete) {
+                        $this->handleDeleteData($item);
+                    } else {
+                        $this->handleCreateOrUpdateData($item);
+                    }
+                } else {
+                    if ($operation == Constant::SyncOpDelete) {
+                        $this->handleDeleteData($item["info"]);
+                    } else {
+                        $this->handleCreateOrUpdateData($item["info"]);
+                    }
                 }
             }
 
@@ -111,7 +119,7 @@ abstract class AbstractSyncDatas
                 }
             }
 
-            if ($isFinished){
+            if ($isFinished) {
                 break;
             }
         }
@@ -119,11 +127,11 @@ abstract class AbstractSyncDatas
 
     protected function getSyncName(): string
     {
-        if ($this instanceof AbstractSyncUsers){
+        if ($this instanceof AbstractSyncUsers) {
             return "用户";
-        }elseif($this instanceof AbstractSyncOrgs){
+        } elseif ($this instanceof AbstractSyncOrgs) {
             return "org";
-        }elseif($this instanceof AbstractSyncSites){
+        } elseif ($this instanceof AbstractSyncSites) {
             return "site";
         }
 
@@ -132,7 +140,7 @@ abstract class AbstractSyncDatas
 
     protected function isSyncUser(): bool
     {
-        if ($this instanceof AbstractSyncUsers){
+        if ($this instanceof AbstractSyncUsers) {
             return true;
         }
         return false;
