@@ -7,9 +7,7 @@
         "psr-4": {
             "Oh86\\JYH\\": "src/"
         },
-        "files": [
-
-        ]
+        "files": []
     },
     "authors": [
         {
@@ -17,7 +15,7 @@
             "email": "chen.gj@qq.com"
         }
     ],
-    "require": {
+    "require-dev": {
         "laravel/framework": ">=7.0"
     },
     "extra": {

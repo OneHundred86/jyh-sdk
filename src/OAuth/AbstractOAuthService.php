@@ -230,19 +230,19 @@ abstract class AbstractOAuthService
     }
 
     /**
-     * 处理来自统一登录的回调请求
+     * 处理来自统一登录的回调请求，并放回响应处理
      * @param Request $request
      * @param array $userData
-     * @return string  redirectUri登录后的跳转地址
+     * @return \Illuminate\Http\Response|array|mixed  响应
      */
-    abstract public function handleLoginCallback(Request $request, array $userData): string;
+    abstract public function handleLoginCallback(Request $request, array $userData);
 
     /**
-     * 处理本应用系统的登出逻辑，并返回之后的跳转地址
+     * 处理本应用系统的登出逻辑，并返回响应处理
      * @param Request $request
-     * @return string
+     * @return \Illuminate\Http\Response|array|mixed  响应
      */
-    abstract public function handleAppLogout(Request $request): string;
+    abstract public function handleAppLogout(Request $request);
 
     /**
      * 处理来自统一登出的回调请求

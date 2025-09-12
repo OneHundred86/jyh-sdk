@@ -37,42 +37,41 @@ class JYHController
     public function loginCallback(Request $request)
     {
         $accessToken = $request->input("access_token");
-        if(!$accessToken){
+        if (!$accessToken) {
             return "access_token为空";
         }
 
         try {
             $userData = $this->oAuthService->getUserInfoByAccessToken($accessToken);
-            $redirectUrl = $this->oAuthService->handleLoginCallback($request, $userData);
+            $response = $this->oAuthService->handleLoginCallback($request, $userData);
             $logoutToken = $userData["logout_token"];
-        }catch (LoginException $e){
+        } catch (LoginException $e) {
             return $e->getMessage();
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
 
         // 如果使用session作为登录状态维护组件，则使用session实现统一登出
         // 否则需要在 handleLoginCallback 自行实现统一登出逻辑
-        if(Session::isStarted()){
+        if (Session::isStarted()) {
             Session::put("jyhLogoutToken", $logoutToken);
             Cache::put("jyhLogoutToken@$logoutToken", Session::getId(), now()->addDay());
         }
 
-        return redirect()->to($redirectUrl);
+        return $response;
     }
 
     public function appLogout(Request $request)
     {
         // 如果使用session作为登录状态维护组件，则使用session实现统一登出
         // 否则需要在 handleAppLogout 自行实现统一登出逻辑
-        if(Session::isStarted()){
-            if($logoutToken = Session::pull("jyhLogoutToken")){
+        if (Session::isStarted()) {
+            if ($logoutToken = Session::pull("jyhLogoutToken")) {
                 $this->oAuthService->logoutJyh($logoutToken);
             }
         }
 
-        $url = $this->oAuthService->handleAppLogout($request);
-        return redirect()->to($url);
+        return $this->oAuthService->handleAppLogout($request);
     }
 
     public function logoutCallback(Request $request)
@@ -82,7 +81,7 @@ class JYHController
 
         // 如果使用session作为登录状态维护组件，则使用session实现统一登出
         // 否则需要在 handleLogoutCallback 自行实现统一登出逻辑
-        if($sessionId){
+        if ($sessionId) {
             Session::setId($sessionId);
             Session::start();
             Session::flush();
@@ -92,7 +91,7 @@ class JYHController
         try {
             $this->oAuthService->handleLogoutCallback($request);
             return ["errcode" => 0, "errmessage" => "ok"];
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $code = $e->getCode();
             return ["errcode" => $code == 0 ? -1 : $code, "errmessage" => $e->getMessage()];
         }
@@ -102,7 +101,7 @@ class JYHController
     {
         try {
             Artisan::call(SyncUsers::class, ["sync_option" => "inc"]);
-        }catch (SyncDataException $e){
+        } catch (SyncDataException $e) {
             return ["errcode" => -1, "errmessage" => $e->getMessage()];
         }
 
@@ -111,11 +110,11 @@ class JYHController
 
     public function syncOrgStructs(Request $request)
     {
-        try{
+        try {
             Artisan::call(SyncServiceAreas::class);
             Artisan::call(SyncOrgs::class, ["sync_option" => "inc"]);
             Artisan::call(SyncSites::class, ["sync_option" => "inc"]);
-        }catch (SyncDataException $e){
+        } catch (SyncDataException $e) {
             return ["errcode" => -1, "errmessage" => $e->getMessage()];
         }
 
