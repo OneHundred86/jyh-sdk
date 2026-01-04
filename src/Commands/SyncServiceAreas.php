@@ -4,7 +4,6 @@ namespace Oh86\JYH\Commands;
 
 use Oh86\JYH\Exceptions\PrivateApiException;
 use Oh86\JYH\Exceptions\SyncDataException;
-use Oh86\JYH\PrivateApi\UCPrivateApi;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Oh86\JYH\SyncDatas\AbstractSyncServiceAreas;
@@ -46,7 +45,7 @@ class SyncServiceAreas extends Command
      */
     public function handle(): int
     {
-        if(!$this->syncService){
+        if (!$this->syncService) {
             Log::debug("无须同步service_area数据");
             return Command::FAILURE;
         }

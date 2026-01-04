@@ -4,7 +4,6 @@ namespace Oh86\JYH\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Oh86\JYH\Commands\SyncOrgs;
