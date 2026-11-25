@@ -45,7 +45,7 @@ class JYHServiceProvider extends ServiceProvider
 
     protected function publishConfig()
     {
-        if($this->app->runningInConsole()){
+        if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__ . "/../config/jyh.php" => config_path('jyh.php'),
             ]);
@@ -54,9 +54,9 @@ class JYHServiceProvider extends ServiceProvider
 
     protected function loadOAuthService()
     {
-        $this->app->singleton(AbstractOAuthService::class, function(){
+        $this->app->singleton(AbstractOAuthService::class, function () {
             $config = config("jyh.uc");
-            if($service = OAuthFactory::createService($config)){
+            if ($service = OAuthFactory::createService($config)) {
                 $service->setAppLoginRoute($config["oauth"]["app_login_route"]);
                 $service->setAppLogoutRoute($config["oauth"]["app_logout_route"]);
                 $service->setLoginCallbackRoute($config["oauth"]["login_callback_route"]);
@@ -70,22 +70,22 @@ class JYHServiceProvider extends ServiceProvider
 
     protected function loadSyncDataServices()
     {
-        $this->app->singleton(AbstractSyncUsers::class, function (){
+        $this->app->singleton(AbstractSyncUsers::class, function () {
             $config = config("jyh.uc");
             return SyncDataFactory::createSyncUserService($config);
         });
 
-        $this->app->singleton(AbstractSyncServiceAreas::class, function (){
+        $this->app->singleton(AbstractSyncServiceAreas::class, function () {
             $config = config("jyh.uc");
             return SyncDataFactory::createSyncServiceAreaService($config);
         });
 
-        $this->app->singleton(AbstractSyncOrgs::class, function (){
+        $this->app->singleton(AbstractSyncOrgs::class, function () {
             $config = config("jyh.uc");
             return SyncDataFactory::createSyncOrgService($config);
         });
 
-        $this->app->singleton(AbstractSyncSites::class, function (){
+        $this->app->singleton(AbstractSyncSites::class, function () {
             $config = config("jyh.uc");
             return SyncDataFactory::createSyncSiteService($config);
         });
@@ -93,7 +93,7 @@ class JYHServiceProvider extends ServiceProvider
 
     protected function loadPrivateApis()
     {
-        $this->app->bind(UCPrivateApi::class, function (){
+        $this->app->bind(UCPrivateApi::class, function () {
             $config = config("jyh.uc");
             return new UCPrivateApi($config["root_url"], $config["private_api"]["app"], $config["private_api"]["ticket"]);
         });
@@ -112,13 +112,13 @@ class JYHServiceProvider extends ServiceProvider
     protected function loadRoutes()
     {
         $config = config("jyh.uc");
-        
+
         // 登录登出
-        if($config["oauth"]["service_class"]){
+        if ($config["oauth"]["service_class"]) {
             /** @var AbstractOAuthService $service */
             $service = $this->app->get(AbstractOAuthService::class);
-            if ($service){
-                Route::get($service->getAppLoginRoute(), [JYHController::class, "appLogin"]);
+            if ($service) {
+                Route::get($service->getAppLoginRoute(), [JYHController::class, "appLogin"])->name("login");
                 Route::middleware($service->getMiddlewares())->get($service->getLoginCallbackRoute(), [JYHController::class, "loginCallback"]);
                 Route::middleware($service->getMiddlewares())->any($service->getAppLogoutRoute(), [JYHController::class, "appLogout"]);
                 Route::any($service->getLogoutCallbackRoute(), [JYHController::class, "logoutCallback"]);
@@ -127,16 +127,16 @@ class JYHServiceProvider extends ServiceProvider
 
         // 同步用户
         $syncUserConfig = $config["sync_data"]["user"];
-        if($syncUserConfig["service_class"]){
+        if ($syncUserConfig["service_class"]) {
             Route::middleware(CheckPrivateApiRequestFromUC::class)
                 ->any($syncUserConfig["route"], [JYHController::class, "syncUsers"]);
         }
         // 同步机构
         $syncOrgStructConfig = $config["sync_data"]["org_struct"];
-        if($syncOrgStructConfig["service_area_service_class"] || $syncOrgStructConfig["org_service_class"] || $syncOrgStructConfig["site_service_class"]) {
+        if ($syncOrgStructConfig["service_area_service_class"] || $syncOrgStructConfig["org_service_class"] || $syncOrgStructConfig["site_service_class"]) {
             Route::middleware(CheckPrivateApiRequestFromUC::class)
                 ->any($syncOrgStructConfig["route"], [JYHController::class, "syncOrgStructs"]);
         }
-        
+
     }
 }
